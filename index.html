@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Darrel Cuts - SMS Automation Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f4f9ff;
+  --white:#ffffff;
+  --blue:#2478cc;
+  --blue-light:#e8f2fc;
+  --text:#0f2a45;
+  --muted:#5a7a9a;
+  --border:#cce0f5;
+  --green:#1a9e6e;
+  --green-bg:#e8f7f2;
+  --shadow:0 2px 12px rgba(36,120,204,0.10);
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
+.page{max-width:480px;margin:0 auto;padding:32px 20px 80px;}
+
+.header{text-align:center;padding:40px 0 28px;}
+.shop-name{font-size:12px;font-weight:600;letter-spacing:3px;color:var(--blue);text-transform:uppercase;margin-bottom:12px;}
+.header h1{font-size:30px;font-weight:600;color:var(--text);line-height:1.25;margin-bottom:10px;}
+.header p{font-size:14px;color:var(--muted);line-height:1.7;max-width:320px;margin:0 auto;}
+
+.twilio-badge{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px auto 0;background:var(--white);border:1px solid var(--border);border-radius:20px;padding:7px 18px;width:fit-content;box-shadow:var(--shadow);}
+.twilio-badge span{font-size:11px;color:var(--muted);}
+.twilio-badge strong{font-size:11px;color:#e3122a;font-weight:600;}
+.twilio-dot{width:7px;height:7px;border-radius:50%;background:#e3122a;flex-shrink:0;}
+
+hr{border:none;border-top:1px solid var(--border);margin:28px 0;}
+.label{font-size:10px;font-weight:600;letter-spacing:2.5px;color:var(--blue);text-transform:uppercase;margin-bottom:14px;}
+
+.steps{display:flex;flex-direction:column;gap:10px;}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--blue-light);color:var(--blue);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-text{font-size:13px;color:var(--text);line-height:1.6;}
+.step-text strong{font-weight:500;}
+
+/* live badge */
+.live-box{background:var(--green-bg);border:1px solid rgba(26,158,110,0.25);border-radius:8px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 5px var(--green);}
+.live-box span{font-size:12px;color:var(--green);font-weight:500;}
+
+/* iPhone mockup */
+.iphone{background:#1c1c1e;border-radius:44px;padding:14px 14px 20px;box-shadow:0 12px 48px rgba(0,0,0,0.3);max-width:280px;margin:0 auto;}
+.notch{width:80px;height:22px;background:#000;border-radius:11px;margin:0 auto 10px;}
+.screen{background:#000;border-radius:32px;overflow:hidden;}
+.status-bar{background:#000;padding:8px 20px 4px;display:flex;justify-content:space-between;}
+.status-bar span{font-size:12px;color:#fff;font-weight:500;}
+.imsg-header{background:#1c1c1e;padding:8px 14px 10px;display:flex;align-items:center;border-bottom:1px solid #2c2c2e;}
+.imsg-back{color:#0a84ff;font-size:15px;margin-right:4px;}
+.imsg-back-num{color:#0a84ff;font-size:13px;margin-right:auto;}
+.imsg-center{text-align:center;flex:1;}
+.imsg-name{font-size:12px;font-weight:600;color:#fff;}
+.imsg-sub{font-size:10px;color:#636366;}
+.chat{background:#000;padding:10px 12px 6px;display:flex;flex-direction:column;gap:4px;}
+.b{font-size:12px;line-height:1.5;padding:8px 11px;border-radius:16px;max-width:85%;}
+.b.s{background:#1d8af8;color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.b.r{background:#2c2c2e;color:#fff;align-self:flex-start;border-bottom-left-radius:4px;}
+.b.r .tn{font-size:9px;color:#636366;display:block;margin-bottom:3px;}
+.ts{font-size:9px;color:#48484a;padding:0 3px;}
+.ts.ri{text-align:right;}
+
+/* keywords */
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;color:var(--blue);}
+
+/* CTA */
+.cta-box{background:var(--blue);border-radius:16px;padding:26px 22px;text-align:center;box-shadow:var(--shadow);}
+.cta-box h2{font-size:20px;font-weight:600;color:#fff;margin-bottom:8px;}
+.cta-box p{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;margin-bottom:16px;}
+.num-box{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:12px;margin-bottom:16px;}
+.num-box .num{font-size:22px;font-weight:600;color:#fff;letter-spacing:1px;}
+.num-box .hint{font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;}
+.sms-btn{display:block;background:#fff;color:var(--blue);text-decoration:none;font-size:14px;font-weight:600;padding:14px;border-radius:10px;}
+.sms-btn span{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:2px;}
+.note-box{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.6;text-align:left;}
+.note-box strong{color:rgba(255,255,255,0.8);}
+
+.footer{text-align:center;margin-top:36px;}
+.footer p{font-size:11px;color:var(--muted);line-height:1.9;}
+.footer a{color:var(--blue);text-decoration:none;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.page>*{animation:fadeUp .4s ease both;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="shop-name">Darrel Cuts: Demo</div>
+    <h1>SMS Automation<br/>that works while<br/>you cut</h1>
+    <p>Every customer message gets handled for bookings, hours, pricing, directions. Zero manual replies needed.</p>
+    <div class="twilio-badge">
+      <div class="twilio-dot"></div>
+      <span>Made with</span>
+      <strong>Twilio</strong>
+      <span>· Live & running</span>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="label">How it works</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">A customer texts <strong>+1 (647) 558-3869</strong> </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">The system reads their message and replies <strong>instantly</strong></div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">Customer gets exactly what they need </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="label">Real conversation</div>
+  <div class="live-box">
+    <div class="live-dot"></div>
+    <span>Real SMS exchange </span>
+  </div>
+
+  <div class="iphone">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="status-bar">
+        <span>2:44</span>
+        <span> 🔋</span>
+      </div>
+      <div class="imsg-header">
+        <span class="imsg-back">‹</span>
+        <span class="imsg-back-num">Messages</span>
+        <div class="imsg-center">
+          <div class="imsg-name">+1 (647) 558-3869</div>
+          <div class="imsg-sub">Text Message · SMS</div>
+        </div>
+      </div>
+      <div class="chat">
+        <div class="ts ri">Today 2:32 PM</div>
+        <div class="b s">Hello</div>
+        <div class="b s">Book</div>
+        <div class="b s">Hello</div>
+        <div class="b s">Hello</div>
+        <div style="height:6px;"></div>
+        <div class="b r">
+          <span class="tn">Sent from your Twilio trial account -</span>
+          Hey! Got your message 👋 Reply with one of these:<br/><br/>
+          BOOK - to get your appointment<br/>
+          HOURS - our schedule<br/>
+          ADDRESS - find us<br/>
+          PRICE - services & pricing
+        </div>
+        <div class="ts">Auto-reply · instant ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="label">Keywords the system handles</div>
+  <div class="chips">
+    <div class="chip">📅 BOOK</div>
+    <div class="chip">⏰ HOURS</div>
+    <div class="chip">📍 ADDRESS</div>
+    <div class="chip">💈 PRICE</div>
+    <div class="chip">anything else → guided menu</div>
+  </div>
+
+  <hr/>
+
+  <div class="label">Try it yourself</div>
+  <div class="cta-box">
+    <h2>Text this number</h2>
+    <p>Send BOOK, HOURS, ADDRESS, or PRICE and get an instant automated reply on your phone.</p>
+    <div class="num-box">
+      <div class="num">+1 (647) 558-3869</div>
+      <div class="hint">Tap below to open your messages app</div>
+    </div>
+    <a class="sms-btn" href="sms:+16475583869&body=BOOK">
+      💬 Text +1 (647) 558-3869
+      <span>Opens iMessage or SMS,  try any keyword</span>
+    </a>
+    <div class="note-box">
+      <strong>Note:</strong> Replies start with "Sent from your Twilio trial account",  this line is removed on a live paid setup. The automation works exactly the same.
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="footer">
+    <p>
+      Built with <a href="https://twilio.com" target="_blank">Twilio</a> SMS · Powered by Twilio Functions<br/>
+     
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
